@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# Start the MongoDB server in the background
-mongod --replSet rs0 --bind_ip_all &
+# Start the MongoDB server in the background WITH the keyFile
+mongod --replSet rs0 --keyFile /etc/mongo/mongo.key --bind_ip_all &
 
 # Capture the process ID of the MongoDB server
 MONGOD_PID=$!

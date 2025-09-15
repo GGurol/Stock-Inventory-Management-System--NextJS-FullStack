@@ -9,10 +9,11 @@ services:
       MONGO_INITDB_DATABASE: ${MONGO_DB}
     volumes:
       - mongo_data:/data/db
+      # CHANGED: Mount the init script and the NEW key file
+      - ./mongo-init.sh:/usr/local/bin/mongo-init.sh
+      - ./mongo.key:/etc/mongo/mongo.key
     ports:
       - "27017:27017"
-    # ADDED: This command starts MongoDB in replica set mode, which Prisma needs.
-    ## command: mongod --replSet rs0 --bind_ip_all
     entrypoint: [ "mongo-init.sh" ]
 
   app:
