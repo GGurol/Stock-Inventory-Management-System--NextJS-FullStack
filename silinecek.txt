@@ -1,5 +1,0 @@
-./utils/axiosInstance.ts:7:      ? "https://stockly-inventory.vercel.app/api" // Production URL
-./pages/api/auth/login.ts:11:    "https://stockly-inventory.vercel.app",
-./pages/api/auth/login.ts:24:      "https://stockly-inventory.vercel.app"
-./app/layout.tsx:66:    url: "https://stockly-inventory.vercel.app/",
-./README.md:24:- **Live-Demo:** [https://stockly-inventory.vercel.app/](https://stockly-inventory.vercel.app/)
