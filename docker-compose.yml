@@ -9,12 +9,19 @@ services:
       MONGO_INITDB_DATABASE: ${MONGO_DB}
     volumes:
       - mongo_data:/data/db
-      # CHANGED: Mount the init script and the NEW key file
-      - ./mongo-init.sh:/usr/local/bin/mongo-init.sh
+      # We still need the key file
       - ./mongo.key:/etc/mongo/mongo.key
     ports:
       - "27017:27017"
-    entrypoint: [ "mongo-init.sh" ]
+    # CORRECTED COMMAND:
+    # This command first fixes the key file's permissions inside the container,
+    # and only then starts the mongod process.
+    command: >
+      bash -c "
+        chown mongodb:mongodb /etc/mongo/mongo.key &&
+        chmod 400 /etc/mongo/mongo.key &&
+        exec mongod --replSet rs0 --keyFile /etc/mongo/mongo.key --bind_ip_all
+      "
 
   app:
     build: .
@@ -23,11 +30,11 @@ services:
     ports:
       - "3000:3000"
     environment:
-      # CHANGED: Added '&replicaSet=rs0' to the end of the connection string.
       DATABASE_URL: "mongodb://${MONGO_USER}:${MONGO_PASS}@db:27017/${MONGO_DB}?authSource=admin&replicaSet=rs0"
       JWT_SECRET: ${JWT_SECRET}
       NEXTAUTH_URL: "http://localhost:3000"
       NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
+    # REMOVED healthcheck condition for this manual test
     depends_on:
       - db
 

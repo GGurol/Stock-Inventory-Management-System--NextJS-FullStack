@@ -16,10 +16,12 @@ do
 done
 
 echo "Connection finished"
-echo "Creating replica set"
+echo "Creating replica set with correct hostname"
 
-# Initiate the replica set using the authenticated connection string
-mongosh "${MONGO_URI}" --eval "rs.status()" | grep -q "no replset config" && mongosh "${MONGO_URI}" --eval "rs.initiate()"
+# --- THE FINAL FIX IS HERE ---
+# Initiate the replica set with an EXPLICIT hostname for the member.
+# This is the key to solving the Docker networking issue.
+mongosh "${MONGO_URI}" --eval "rs.status()" | grep -q "no replset config" && mongosh "${MONGO_URI}" --eval 'rs.initiate({_id: "rs0", members: [{_id: 0, host: "db:27017"}]})'
 
 echo "Replica set created"
 
