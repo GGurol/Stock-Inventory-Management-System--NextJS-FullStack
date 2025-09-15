@@ -1,0 +1,32 @@
+services:
+  db:
+    image: mongo:6.0
+    container_name: stockly_db
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASS}
+      MONGO_INITDB_DATABASE: ${MONGO_DB}
+    volumes:
+      - mongo_data:/data/db
+    ports:
+      - "27017:27017"
+
+  app:
+    build: .
+    container_name: stockly_app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      # This is the connection string that Prisma will use to connect to the db service
+      DATABASE_URL: "mongodb://${MONGO_USER}:${MONGO_PASS}@db:27017/${MONGO_DB}?authSource=admin"
+      JWT_SECRET: ${JWT_SECRET}
+      # NEXTAUTH variables are often needed for production builds
+      NEXTAUTH_URL: "http://localhost:3000"
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
+    depends_on:
+      - db
+
+volumes:
+  mongo_data:

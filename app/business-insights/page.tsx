@@ -355,34 +355,38 @@ export default function BusinessInsightsPage() {
           <TabsContent value="overview" className="space-y-4">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
               {/* Category Distribution */}
-              <ChartCard title="Category Distribution" icon={PieChartIcon}>
-                <ResponsiveContainer width="100%" height={300}>
-                  <PieChart>
-                    <Pie
-                      data={analyticsData.categoryDistribution}
-                      cx="50%"
-                      cy="50%"
-                      labelLine={false}
-                      label={({ name, percent }) =>
-                        `${name} ${((percent || 0) * 100).toFixed(0)}%`
-                      }
-                      outerRadius={80}
-                      fill="#8884d8"
-                      dataKey="value"
-                    >
-                      {analyticsData.categoryDistribution.map(
-                        (entry, index) => (
-                          <Cell
-                            key={`cell-${index}`}
-                            fill={COLORS[index % COLORS.length]}
-                          />
-                        )
-                      )}
-                    </Pie>
-                    <Tooltip />
-                  </PieChart>
-                </ResponsiveContainer>
-              </ChartCard>
+
+<ChartCard title="Category Distribution" icon={PieChartIcon}>
+  <ResponsiveContainer width="100%" height={300}>
+    <PieChart>
+      <Pie
+        data={analyticsData.categoryDistribution}
+        cx="50%"
+        cy="50%"
+        labelLine={false}
+        // CORRECTED: Added an explicit 'any' type to the props argument
+        // to bypass the incorrect type inference from the library.
+        label={(props: any) =>
+          `${props.name} ${((props.percent || 0) * 100).toFixed(0)}%`
+        }
+        outerRadius={80}
+        fill="#8884d8"
+        dataKey="value"
+      >
+        {analyticsData.categoryDistribution.map(
+          (entry, index) => (
+            <Cell
+              key={`cell-${index}`}
+              fill={COLORS[index % COLORS.length]}
+            />
+          )
+        )}
+      </Pie>
+      <Tooltip />
+    </PieChart>
+  </ResponsiveContainer>
+</ChartCard>
+
 
               {/* Monthly Trend - Full Year */}
               <ChartCard
