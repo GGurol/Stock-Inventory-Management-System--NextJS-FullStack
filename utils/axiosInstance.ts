@@ -1,17 +1,17 @@
 import axios from "axios";
 import Cookies from "js-cookie";
 
+// This will now correctly use the URL from your .env or .env.local file
 const axiosInstance = axios.create({
-  baseURL:
-    process.env.NODE_ENV === "production"
-      ? "https://stockly-inventory.vercel.app/api" // Production URL
-      : "http://localhost:3000/api", // Localhost for development
+  baseURL: process.env.NEXT_PUBLIC_API_URL,
   headers: {
     "Content-Type": "application/json",
   },
   withCredentials: true, // Ensure cookies are sent with requests
 });
 
+// This part is correct and should remain.
+// It automatically adds the user's session token to every API request.
 axiosInstance.interceptors.request.use((config) => {
   const token = Cookies.get("session_id");
   if (token) {

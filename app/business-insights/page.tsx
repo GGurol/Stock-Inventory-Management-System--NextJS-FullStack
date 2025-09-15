@@ -52,7 +52,6 @@ export default function BusinessInsightsPage() {
   const { user } = useAuth();
   const { toast } = useToast();
 
-  // Calculate analytics data with corrected calculations
   const analyticsData = useMemo(() => {
     if (!allProducts || allProducts.length === 0) {
       return {
@@ -76,49 +75,40 @@ export default function BusinessInsightsPage() {
 
     const totalProducts = allProducts.length;
 
-    // CORRECTED: Total value calculation - sum of (price * quantity) for each product
     const totalValue = allProducts.reduce((sum, product) => {
       return sum + product.price * Number(product.quantity);
     }, 0);
 
-    // CORRECTED: Low stock items - products with quantity > 0 AND quantity <= 20 (matching product table logic)
     const lowStockItems = allProducts.filter(
       (product) =>
         Number(product.quantity) > 0 && Number(product.quantity) <= 20
     ).length;
 
-    // CORRECTED: Out of stock items - products with quantity = 0
     const outOfStockItems = allProducts.filter(
       (product) => Number(product.quantity) === 0
     ).length;
 
-    // CORRECTED: Total quantity - sum of all quantities
     const totalQuantity = allProducts.reduce((sum, product) => {
       return sum + Number(product.quantity);
     }, 0);
 
-    // CORRECTED: Average price calculation - total value divided by total quantity
     const averagePrice = totalQuantity > 0 ? totalValue / totalQuantity : 0;
 
-    // CORRECTED: Stock utilization - percentage of products that are not out of stock
     const stockUtilization =
       totalProducts > 0
         ? ((totalProducts - outOfStockItems) / totalProducts) * 100
         : 0;
 
-    // CORRECTED: Value density - total value divided by total products
     const valueDensity = totalProducts > 0 ? totalValue / totalProducts : 0;
 
-    // CORRECTED: Stock coverage - average quantity per product
     const stockCoverage = totalProducts > 0 ? totalQuantity / totalProducts : 0;
 
-    // Category distribution based on quantity (not just count)
     const categoryMap = new Map<
       string,
       { count: number; quantity: number; value: number }
     >();
     allProducts.forEach((product) => {
-      const category = product.category || "Unknown";
+      const category = product.category?.name || "Unknown"; // Safely access category name
       const current = categoryMap.get(category) || {
         count: 0,
         quantity: 0,
@@ -131,7 +121,6 @@ export default function BusinessInsightsPage() {
       });
     });
 
-    // Convert to percentage based on quantity
     const categoryDistribution = Array.from(categoryMap.entries()).map(
       ([name, data]) => ({
         name,
@@ -141,7 +130,6 @@ export default function BusinessInsightsPage() {
       })
     );
 
-    // Status distribution
     const statusMap = new Map<string, number>();
     allProducts.forEach((product) => {
       const status = product.status || "Unknown";
@@ -151,7 +139,6 @@ export default function BusinessInsightsPage() {
       ([name, value]) => ({ name, value })
     );
 
-    // Price range distribution
     const priceRanges = [
       { name: "$0-$100", min: 0, max: 100 },
       { name: "$100-$500", min: 100, max: 500 },
@@ -164,52 +151,34 @@ export default function BusinessInsightsPage() {
       name: range.name,
       value: allProducts.filter((product) => {
         if (range.name === "$2000+") {
-          // For $2000+ range, include products > $2000 (not including $2000)
           return product.price > 2000;
         } else if (range.name === "$1000-$2000") {
-          // For $1000-$2000 range, include products >= $1000 and <= $2000
           return product.price >= range.min && product.price <= range.max;
         } else {
-          // For other ranges, include products >= min and < max (exclusive upper bound)
           return product.price >= range.min && product.price < range.max;
         }
       }).length,
     }));
 
-    // CORRECTED: Monthly trend based on actual product creation dates
     const monthlyTrend: Array<{
       month: string;
       products: number;
       monthlyAdded: number;
     }> = [];
     const months = [
-      "Jan",
-      "Feb",
-      "Mar",
-      "Apr",
-      "May",
-      "Jun",
-      "Jul",
-      "Aug",
-      "Sep",
-      "Oct",
-      "Nov",
-      "Dec",
+      "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
     ];
 
-    // Group products by creation month using UTC to avoid timezone issues
     const productsByMonth = new Map<string, number>();
     allProducts.forEach((product) => {
       const date = new Date(product.createdAt);
-      // Use UTC methods to ensure consistent month extraction
       const monthKey = `${date.getUTCFullYear()}-${String(
         date.getUTCMonth() + 1
       ).padStart(2, "0")}`;
       productsByMonth.set(monthKey, (productsByMonth.get(monthKey) || 0) + 1);
     });
 
-    // Create trend data for the whole year
-    // Use the year from the first product's creation date to ensure correct year mapping
     const dataYear =
       allProducts.length > 0
         ? new Date(allProducts[0].createdAt).getUTCFullYear()
@@ -220,7 +189,6 @@ export default function BusinessInsightsPage() {
       const monthKey = `${dataYear}-${String(index + 1).padStart(2, "0")}`;
       const productsThisMonth = productsByMonth.get(monthKey) || 0;
       cumulativeProducts += productsThisMonth;
-
       monthlyTrend.push({
         month,
         products: cumulativeProducts,
@@ -228,7 +196,6 @@ export default function BusinessInsightsPage() {
       });
     });
 
-    // Top products by value
     const topProducts = allProducts
       .sort(
         (a, b) => b.price * Number(b.quantity) - a.price * Number(a.quantity)
@@ -240,13 +207,12 @@ export default function BusinessInsightsPage() {
         quantity: Number(product.quantity),
       }));
 
-    // Low stock products (matching product table logic: quantity > 0 AND quantity <= 20)
     const lowStockProducts = allProducts
       .filter(
         (product) =>
           Number(product.quantity) > 0 && Number(product.quantity) <= 20
       )
-      .sort((a, b) => Number(a.quantity) - Number(b.quantity))
+      .sort((a, b) => Number(a.quantity) - Number(a.quantity))
       .slice(0, 5);
 
     return {
@@ -292,7 +258,6 @@ export default function BusinessInsightsPage() {
   return (
     <AuthenticatedLayout>
       <div className="container mx-auto p-6 space-y-6">
-        {/* Header */}
         <div className="flex items-center justify-between">
           <div className="space-y-2">
             <h1 className="text-4xl font-bold text-primary">
@@ -311,7 +276,6 @@ export default function BusinessInsightsPage() {
           </Button>
         </div>
 
-        {/* Key Metrics */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <AnalyticsCard
             title="Total Products"
@@ -343,7 +307,6 @@ export default function BusinessInsightsPage() {
           />
         </div>
 
-        {/* Charts and Insights */}
         <Tabs defaultValue="overview" className="space-y-4">
           <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="overview">Overview</TabsTrigger>
@@ -354,41 +317,35 @@ export default function BusinessInsightsPage() {
 
           <TabsContent value="overview" className="space-y-4">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-              {/* Category Distribution */}
+              <ChartCard title="Category Distribution" icon={PieChartIcon}>
+                <ResponsiveContainer width="100%" height={300}>
+                  <PieChart>
+                    <Pie
+                      data={analyticsData.categoryDistribution}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      label={(props: any) =>
+                        `${props.name} ${((props.percent || 0) * 100).toFixed(0)}%`
+                      }
+                      outerRadius={80}
+                      fill="#8884d8"
+                      dataKey="value"
+                    >
+                      {analyticsData.categoryDistribution.map(
+                        (entry, index) => (
+                          <Cell
+                            key={`cell-${index}`}
+                            fill={COLORS[index % COLORS.length]}
+                          />
+                        )
+                      )}
+                    </Pie>
+                    <Tooltip />
+                  </PieChart>
+                </ResponsiveContainer>
+              </ChartCard>
 
-<ChartCard title="Category Distribution" icon={PieChartIcon}>
-  <ResponsiveContainer width="100%" height={300}>
-    <PieChart>
-      <Pie
-        data={analyticsData.categoryDistribution}
-        cx="50%"
-        cy="50%"
-        labelLine={false}
-        // CORRECTED: Added an explicit 'any' type to the props argument
-        // to bypass the incorrect type inference from the library.
-        label={(props: any) =>
-          `${props.name} ${((props.percent || 0) * 100).toFixed(0)}%`
-        }
-        outerRadius={80}
-        fill="#8884d8"
-        dataKey="value"
-      >
-        {analyticsData.categoryDistribution.map(
-          (entry, index) => (
-            <Cell
-              key={`cell-${index}`}
-              fill={COLORS[index % COLORS.length]}
-            />
-          )
-        )}
-      </Pie>
-      <Tooltip />
-    </PieChart>
-  </ResponsiveContainer>
-</ChartCard>
-
-
-              {/* Monthly Trend - Full Year */}
               <ChartCard
                 title="Product Growth Trend (Full Year)"
                 icon={TrendingUp}
@@ -413,7 +370,6 @@ export default function BusinessInsightsPage() {
 
           <TabsContent value="distribution" className="space-y-4">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-              {/* Status Distribution */}
               <ChartCard title="Status Distribution" icon={Activity}>
                 <ResponsiveContainer width="100%" height={300}>
                   <BarChart data={analyticsData.statusDistribution}>
@@ -426,7 +382,6 @@ export default function BusinessInsightsPage() {
                 </ResponsiveContainer>
               </ChartCard>
 
-              {/* Price Range Distribution */}
               <ChartCard title="Price Range Distribution" icon={BarChart3}>
                 <ResponsiveContainer width="100%" height={300}>
                   <BarChart data={analyticsData.priceRangeDistribution}>
@@ -443,7 +398,6 @@ export default function BusinessInsightsPage() {
 
           <TabsContent value="trends" className="space-y-4">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-              {/* Top Products by Value */}
               <ChartCard title="Top Products by Value" icon={TrendingUp}>
                 <ResponsiveContainer width="100%" height={300}>
                   <BarChart
@@ -465,7 +419,6 @@ export default function BusinessInsightsPage() {
                 </ResponsiveContainer>
               </ChartCard>
 
-              {/* Monthly Product Addition Trend */}
               <ChartCard title="Monthly Product Addition" icon={TrendingDown}>
                 <ResponsiveContainer width="100%" height={300}>
                   <LineChart data={analyticsData.monthlyTrend}>
@@ -486,7 +439,6 @@ export default function BusinessInsightsPage() {
           </TabsContent>
 
           <TabsContent value="alerts" className="space-y-4">
-            {/* Low Stock Alerts */}
             <ChartCard title="Low Stock Alerts" icon={AlertTriangle}>
               <div className="space-y-4">
                 {analyticsData.lowStockProducts.length > 0 ? (
@@ -507,7 +459,7 @@ export default function BusinessInsightsPage() {
                               </p>
                             </div>
                             <Badge variant="destructive" className="text-xs">
-                              {product.quantity} left
+                              {`${product.quantity}`} left
                             </Badge>
                           </div>
                         </CardContent>
@@ -527,7 +479,6 @@ export default function BusinessInsightsPage() {
           </TabsContent>
         </Tabs>
 
-        {/* Additional Insights */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           <Card>
             <CardHeader>
@@ -602,7 +553,7 @@ export default function BusinessInsightsPage() {
             </CardHeader>
             <CardContent>
               <QRCodeComponent
-                data={`${window.location.origin}/business-insights`}
+                data={`${typeof window !== 'undefined' ? window.location.origin : ''}/business-insights`}
                 title="Dashboard QR"
                 size={120}
                 showDownload={false}
@@ -610,8 +561,7 @@ export default function BusinessInsightsPage() {
             </CardContent>
           </Card>
         </div>
-
-        {/* Forecasting Section */}
+        
         <ForecastingCard products={allProducts} />
       </div>
     </AuthenticatedLayout>

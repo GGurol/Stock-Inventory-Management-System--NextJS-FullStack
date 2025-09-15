@@ -1,14 +1,13 @@
-
-import GlobalLoading from "@/components/GlobalLoading";
-import { Toaster } from "@/components/ui/toaster";
+import React, { Suspense } from "react";
 import { Poppins } from "next/font/google";
 import localFont from "next/font/local";
-import React, { Suspense } from "react";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import type { Metadata } from "next";
+
+import GlobalLoading from "@/components/GlobalLoading";
+import { Toaster } from "@/components/ui/toaster"; // Using the shadcn toaster
 import { AuthProvider } from "./authContext";
-import "./globals.css";
 import { ThemeProvider } from "./ThemeProvider";
+import "./globals.css";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -27,62 +26,44 @@ const poppins = Poppins({
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
 });
 
-export const metadata = {
-  title: "Stockly - Inventory Management System",
-  description:
-    "Stockly is a modern Next.js web application for efficient product inventory management. Features include product listing, filtering, sorting, secure authentication, and responsive design.",
-  authors: [
-    {
-      name: "Arnob Mahmud",
-      url: "https://arnob-mahmud.vercel.app/",
-      email: "arnob_t78@yahoo.com",
+// CORRECTED: Converted to a dynamic metadata function
+export async function generateMetadata(): Promise<Metadata> {
+  const siteUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
+
+  return {
+    title: "Stockly - Inventory Management System",
+    description:
+      "Stockly is a modern Next.js web application for efficient product inventory management.",
+    authors: [
+      { name: "Guney", url: "" },
+    ],
+    keywords: [
+      "Stockly", "Inventory Management", "Next.js", "React", "Prisma", "MongoDB",
+    ],
+    icons: { icon: "/favicon.ico", apple: "/favicon.ico" },
+    openGraph: {
+      title: "Stockly - Inventory Management System",
+      description: "Efficiently manage your product inventory with Stockly.",
+      url: siteUrl, // Uses the environment variable
+      images: [
+        {
+          url: "https://github.com/user-attachments/assets/7495dcfb-c7cb-44e6-a1ef-d82930a8ada7",
+          width: 1200,
+          height: 630,
+          alt: "Stockly Screenshot",
+        },
+      ],
     },
-  ],
-  keywords: [
-    "Stockly",
-    "Inventory Management",
-    "Next.js",
-    "React",
-    "Prisma",
-    "MongoDB",
-    "Product Listing",
-    "Authentication",
-    "JWT",
-    "CRUD",
-    "Responsive Web App",
-    "Arnob Mahmud",
-  ],
-  icons: {
-    icon: "/favicon.ico",
-    apple: "/favicon.ico",
-    other: [
-      { rel: "icon", url: "/favicon.ico" },
-    ],
-  },
-  openGraph: {
-    title: "Stockly - Inventory Management System",
-    description:
-      "Efficiently manage your product inventory with Stockly, a secure and responsive Next.js web application.",
-    url: "https://stockly-inventory.vercel.app/",
-    images: [
-      {
-        url: "https://github.com/user-attachments/assets/7495dcfb-c7cb-44e6-a1ef-d82930a8ada7",
-        width: 1200,
-        height: 630,
-        alt: "Stockly Screenshot",
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Stockly - Inventory Management System",
-    description:
-      "Efficiently manage your product inventory with Stockly, a secure and responsive Next.js web application.",
-    images: [
-      "https://github.com/user-attachments/assets/7495dcfb-c7cb-44e6-a1ef-d82930a8ada7",
-    ],
-  },
-};
+    twitter: {
+      card: "summary_large_image",
+      title: "Stockly - Inventory Management System",
+      description: "Efficiently manage your product inventory with Stockly.",
+      images: [
+        "https://github.com/user-attachments/assets/7495dcfb-c7cb-44e6-a1ef-d82930a8ada7",
+      ],
+    },
+  };
+}
 
 export default function RootLayout({
   children,
@@ -92,7 +73,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${poppins.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${poppins.variable} font-sans antialiased`}
       >
         <AuthProvider>
           <ThemeProvider
@@ -101,13 +82,12 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <Suspense fallback={<div>Loading...</div>}>
-              <GlobalLoading />
+            <Suspense fallback={<GlobalLoading />}>
+              {children}
             </Suspense>
-            <Suspense fallback={<div>Loading...</div>}>{children}</Suspense>
+            {/* CLEANED UP: Only one Toaster is needed */}
+            <Toaster />
           </ThemeProvider>
-          <Toaster />
-          <ToastContainer />
         </AuthProvider>
       </body>
     </html>
