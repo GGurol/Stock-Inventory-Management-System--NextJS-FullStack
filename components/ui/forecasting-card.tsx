@@ -101,15 +101,15 @@ export function ForecastingCard({ products, className }: ForecastingCardProps) {
     // Generate demand forecast by category
     const categoryMap = new Map<string, Product[]>();
     products.forEach((product) => {
-      const category = product.category || "Unknown";
-      if (!categoryMap.has(category)) {
-        categoryMap.set(category, []);
+      const categoryName = product.category?.name || "Unknown";
+      if (!categoryMap.has(categoryName)) {
+        categoryMap.set(categoryName, []);
       }
-      categoryMap.get(category)!.push(product);
+      categoryMap.get(categoryName)!.push(product);
     });
 
     const demandForecast = Array.from(categoryMap.entries()).map(
-      ([category, categoryProducts]) => {
+      ([categoryName, categoryProducts]) => {
         const currentStock = categoryProducts.reduce(
           (sum, p) => sum + p.quantity,
           0
@@ -127,7 +127,7 @@ export function ForecastingCard({ products, className }: ForecastingCardProps) {
         const confidence = Math.min(85, Math.max(60, 100 - avgPrice / 10)); // Higher price = lower confidence
 
         return {
-          category,
+          category: categoryName,
           currentStock,
           predictedDemand,
           confidence,

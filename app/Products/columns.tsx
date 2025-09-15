@@ -156,7 +156,7 @@ export const columns: ColumnDef<Product>[] = [
     accessorKey: "category",
     header: "Category",
     cell: ({ row }) => {
-      const categoryName = row.original.category;
+      const categoryName = row.original.category?.name;
       return <span>{categoryName || "Unknown"}</span>;
     },
   },
@@ -164,7 +164,7 @@ export const columns: ColumnDef<Product>[] = [
     accessorKey: "supplier",
     header: "Supplier",
     cell: ({ row }) => {
-      const supplierName = row.original.supplier; // Display supplier name
+      const supplierName = row.original.supplier?.name;
       return <span>{supplierName || "Unknown"}</span>;
     },
   },
@@ -180,8 +180,8 @@ export const columns: ColumnDef<Product>[] = [
         price: product.price,
         quantity: product.quantity,
         status: product.status,
-        category: product.category,
-        supplier: product.supplier,
+        category: product.category?.name || "N/A",
+        supplier: product.supplier?.name || "N/A",
       });
 
       return (

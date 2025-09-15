@@ -1,6 +1,5 @@
 generator client {
   provider      = "prisma-client-js"
-  // CORRECTED: Use the Alpine-compatible engine
   binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
 }
 

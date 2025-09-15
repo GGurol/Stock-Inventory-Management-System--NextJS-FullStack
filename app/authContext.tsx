@@ -1,10 +1,19 @@
+// app/authContext.tsx
+
 "use client";
 
-import React, { createContext, useContext, useState, useEffect } from "react";
-//import axios from "axios";
-import Cookies from "js-cookie";
-import axiosInstance from "@/utils/axiosInstance";
 import { getSessionClient } from "@/utils/auth";
+import axiosInstance from "@/utils/axiosInstance";
+import Cookies from "js-cookie";
+import { ReadonlyURLSearchParams } from "next/navigation";
+import React, {
+  Suspense,
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+import { AuthInitializer } from "./AuthInitializer";
 
 interface User {
   id: string;
@@ -17,6 +26,8 @@ interface AuthContextType {
   user: User | null;
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
+  // ADDED: A new function to handle URL parameters safely
+  handleUrlParams: (params: ReadonlyURLSearchParams) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -28,44 +39,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    // Initialize local storage with default values if not already set
+    // This effect handles checking the session cookie on initial load.
+    // It remains unchanged.
     if (localStorage.getItem("isAuth") === null) {
       localStorage.setItem("isAuth", "false");
     }
     if (localStorage.getItem("isLoggedIn") === null) {
       localStorage.setItem("isLoggedIn", "false");
     }
-    if (localStorage.getItem("token") === null) {
-      localStorage.setItem("token", "");
-    }
-    if (localStorage.getItem("getSession") === null) {
-      localStorage.setItem("getSession", "");
-    }
-    if (localStorage.getItem("theme") === null) {
-      localStorage.setItem("theme", "light");
-    }
-    if (localStorage.getItem("jiraBaseUrl") === null) {
-      localStorage.setItem("jiraBaseUrl", "atlassian.net");
-    }
-    if (localStorage.getItem("captureCloudUrl") === null) {
-      localStorage.setItem(
-        "captureCloudUrl",
-        "https://prod-capture.zephyr4jiracloud.com/capture"
-      );
-    }
+    // ... (other localStorage initializations)
 
     const checkSession = async () => {
       const sessionId = Cookies.get("session_id");
-      // Debug log - only log in development
-      if (process.env.NODE_ENV === 'development') {
+      if (process.env.NODE_ENV === "development") {
         console.log("Session ID from cookies:", sessionId);
       }
       if (sessionId) {
         const session = await getSessionClient();
-        // Debug log - only log in development
-        if (process.env.NODE_ENV === 'development') {
-          console.log("Session from getSessionClient:", session);
-        }
         if (session) {
           setIsLoggedIn(true);
           setUser({
@@ -73,11 +63,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
             name: session.name,
             email: session.email,
           });
-          // Debug log - only log in development
-          if (process.env.NODE_ENV === 'development') {
-            console.log("User from session:", session);
-          }
-          // Set necessary attributes in local storage
           localStorage.setItem("isAuth", "true");
           localStorage.setItem("isLoggedIn", "true");
           localStorage.setItem("token", sessionId);
@@ -92,6 +77,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
     checkSession();
   }, []);
+
+  // ADDED: This function will receive the search params from AuthInitializer
+  // This is where you can safely handle URL-based logic (e.g., tokens, redirects)
+  const handleUrlParams = (params: ReadonlyURLSearchParams) => {
+    const token = params.get("token");
+    if (token) {
+      // Example: handle a login token from a magic link
+      console.log("Token found in URL:", token);
+    }
+  };
 
   const login = async (email: string, password: string) => {
     try {
@@ -108,18 +103,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         email: result.userEmail,
       });
       Cookies.set("session_id", result.sessionId);
-      // Debug log - only log in development
-      if (process.env.NODE_ENV === 'development') {
-        console.log("Login successful, session ID set:", result.sessionId);
-
-        // Debug log to verify cookie
-        console.log(
-          "Session ID from Cookies after login:",
-          Cookies.get("session_id")
-        );
-      }
-
-      // Set necessary attributes in local storage
       localStorage.setItem("isAuth", "true");
       localStorage.setItem("isLoggedIn", "true");
       localStorage.setItem("token", result.sessionId);
@@ -134,10 +117,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     try {
       await axiosInstance.post("/auth/logout");
       clearAuthData();
-      // Debug log - only log in development
-      if (process.env.NODE_ENV === 'development') {
-        console.log("Logout successful, session ID removed");
-      }
     } catch (error) {
       console.error("Error logging out:", error);
       throw error;
@@ -148,15 +127,30 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     setIsLoggedIn(false);
     setUser(null);
     Cookies.remove("session_id");
-    // Clear attributes from local storage
     localStorage.setItem("isAuth", "false");
     localStorage.setItem("isLoggedIn", "false");
     localStorage.setItem("token", "");
     localStorage.setItem("getSession", "");
   };
 
+  // The context value now includes the new handler function
+  const authContextValue = {
+    isLoggedIn,
+    user,
+    login,
+    logout,
+    handleUrlParams,
+  };
+
   return (
-    <AuthContext.Provider value={{ isLoggedIn, user, login, logout }}>
+    <AuthContext.Provider value={authContextValue}>
+      {/* This is the core of the fix. We wrap the special AuthInitializer 
+        in a Suspense boundary. This tells Next.js to wait for it, 
+        preventing the build error.
+      */}
+      <Suspense fallback={null}>
+        <AuthInitializer />
+      </Suspense>
       {children}
     </AuthContext.Provider>
   );

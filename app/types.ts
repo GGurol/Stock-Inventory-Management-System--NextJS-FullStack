@@ -1,4 +1,16 @@
-//import { ReactNode } from "react";
+// Define the Supplier interface
+export interface Supplier {
+  id: string;
+  name: string;
+  userId: string;
+}
+
+// Define the Category interface
+export interface Category {
+  id: string;
+  name: string;
+  userId: string;
+}
 
 // Define the Product interface
 export interface Product {
@@ -12,20 +24,8 @@ export interface Product {
   userId: string;
   categoryId: string;
   supplierId: string;
-  category?: string;
-  supplier?: string;
-}
-
-// Define the Supplier interface
-export interface Supplier {
-  id: string;
-  name: string;
-  userId: string;
-}
-
-// Define the Category interface
-export interface Category {
-  id: string;
-  name: string;
-  userId: string;
+  // CORRECTED: The category is an object of type Category
+  category?: Category;
+  // CORRECTED: The supplier is an object of type Supplier
+  supplier?: Supplier;
 }
