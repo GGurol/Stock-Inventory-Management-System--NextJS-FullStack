@@ -1,0 +1,145 @@
+.
+├── app
+│   ├── 404.tsx
+│   ├── api-docs
+│   │   ├── ApiDocsClient.tsx
+│   │   └── page.tsx
+│   ├── api-status
+│   │   ├── ApiStatusClient.tsx
+│   │   └── page.tsx
+│   ├── AppHeader
+│   │   ├── AppHeader.tsx
+│   │   └── ModeToggle.tsx
+│   ├── AppTable
+│   │   ├── AppTableClient.tsx
+│   │   ├── AppTable.tsx
+│   │   ├── dropdowns
+│   │   │   ├── CategoryDropDown.tsx
+│   │   │   ├── StatusDropDown.tsx
+│   │   │   └── SupplierDropDown.tsx
+│   │   └── ProductDialog
+│   │       ├── AddCategoryDialog.tsx
+│   │       ├── AddProductDialog.tsx
+│   │       ├── AddSupplierDialog.tsx
+│   │       └── _components
+│   │           ├── Price.tsx
+│   │           ├── ProductCategory.tsx
+│   │           ├── ProductName.tsx
+│   │           ├── Quantity.tsx
+│   │           ├── SKU.tsx
+│   │           ├── Status.tsx
+│   │           └── Supplier.tsx
+│   ├── authContext.tsx
+│   ├── AuthInitializer.tsx
+│   ├── business-insights
+│   │   ├── BusinessInsightsClient.tsx
+│   │   └── page.tsx
+│   ├── components
+│   │   └── AuthenticatedLayout.tsx
+│   ├── DeleteDialog.tsx
+│   ├── FiltersAndActions.tsx
+│   ├── fonts
+│   │   ├── GeistMonoVF.woff
+│   │   └── GeistVF.woff
+│   ├── globals.css
+│   ├── Home.tsx
+│   ├── layout.tsx
+│   ├── layout.tsx.bak
+│   ├── login
+│   │   ├── LoginClient.tsx
+│   │   └── page.tsx
+│   ├── logout
+│   │   ├── LogoutClient.tsx
+│   │   └── page.tsx
+│   ├── _not-found
+│   │   ├── NotFoundClient.tsx
+│   │   └── page.tsx
+│   ├── page.tsx
+│   ├── Products
+│   │   ├── columns.tsx
+│   │   ├── PaginationSelection.tsx
+│   │   ├── ProductsDropDown.tsx
+│   │   └── ProductTable.tsx
+│   ├── register
+│   │   ├── page.tsx
+│   │   └── RegisterClient.tsx
+│   ├── ThemeProvider.tsx
+│   ├── types.ts
+│   ├── useAppTheme.ts
+│   └── useProductStore.ts
+├── components
+│   ├── GlobalLoading.tsx
+│   ├── Loading.tsx
+│   ├── Skeleton.tsx
+│   └── ui
+│       ├── advanced-search.tsx
+│       ├── alert-dialog.tsx
+│       ├── analytics-card.tsx
+│       ├── badge.tsx
+│       ├── button.tsx
+│       ├── card.tsx
+│       ├── chart-card.tsx
+│       ├── checkbox.tsx
+│       ├── command.tsx
+│       ├── dialog.tsx
+│       ├── dropdown-menu.tsx
+│       ├── forecasting-card.tsx
+│       ├── input.tsx
+│       ├── label.tsx
+│       ├── popover.tsx
+│       ├── progress.tsx
+│       ├── qr-code-hover.tsx
+│       ├── qr-code.tsx
+│       ├── select.tsx
+│       ├── separator.tsx
+│       ├── table.tsx
+│       ├── tabs.tsx
+│       ├── toaster.tsx
+│       └── toast.tsx
+├── components.json
+├── docker-compose.yml
+├── Dockerfile
+├── favicon.ico
+├── hooks
+│   └── use-toast.ts
+├── launch.json
+├── lib
+│   └── utils.ts
+├── middleware
+│   └── authMiddleware.ts
+├── middleware.ts
+├── mongo-init.sh
+├── mongo.key
+├── next.config.mjs
+├── package.json
+├── pages
+│   └── api
+│       ├── auth
+│       │   ├── login.ts
+│       │   ├── logout.ts
+│       │   ├── register.ts
+│       │   └── session.ts
+│       ├── categories
+│       │   └── index.ts
+│       ├── products
+│       │   └── index.ts
+│       └── suppliers
+│           └── index.ts
+├── postcss.config.mjs
+├── prisma
+│   ├── category.ts
+│   ├── client.ts
+│   ├── product.ts
+│   ├── schema.prisma
+│   └── supplier.ts
+├── public
+│   └── favicon.ico
+├── README.md
+├── tailwind.config.ts
+├── tree.txt
+├── tsconfig.json
+└── utils
+    ├── auth.ts
+    └── axiosInstance.ts
+
+31 directories, 112 files
