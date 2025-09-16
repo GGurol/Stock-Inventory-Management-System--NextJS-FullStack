@@ -4,24 +4,15 @@ services:
     container_name: stockly_db
     restart: unless-stopped
     environment:
-      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASS}
-      MONGO_INITDB_DATABASE: ${MONGO_DB}
+      MONGO_USER: ${MONGO_USER}
+      MONGO_PASS: ${MONGO_PASS}
     volumes:
       - mongo_data:/data/db
-      # We still need the key file
       - ./mongo.key:/etc/mongo/mongo.key
+      - ./mongo-init.sh:/usr/local/bin/mongo-init.sh
     ports:
       - "27017:27017"
-    # CORRECTED COMMAND:
-    # This command first fixes the key file's permissions inside the container,
-    # and only then starts the mongod process.
-    command: >
-      bash -c "
-        chown mongodb:mongodb /etc/mongo/mongo.key &&
-        chmod 400 /etc/mongo/mongo.key &&
-        exec mongod --replSet rs0 --keyFile /etc/mongo/mongo.key --bind_ip_all
-      "
+    entrypoint: [ "mongo-init.sh" ]
 
   app:
     build: .
@@ -34,9 +25,9 @@ services:
       JWT_SECRET: ${JWT_SECRET}
       NEXTAUTH_URL: "http://localhost:3000"
       NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
-    # REMOVED healthcheck condition for this manual test
     depends_on:
-      - db
+      db:
+        condition: service_started # We can simplify this now
 
 volumes:
   mongo_data:
