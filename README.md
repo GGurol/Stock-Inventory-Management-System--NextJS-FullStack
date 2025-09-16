@@ -21,8 +21,6 @@
 
 Efficiently manage your product inventory with Stockly—a modern, secure, and responsive inventory management web application built with Next.js, React, Prisma, and MongoDB.
 
-- **Live-Demo:** [https://stockly-inventory.vercel.app/](https://stockly-inventory.vercel.app/)
-
 ---
 
 ## Project Overview
@@ -206,89 +204,59 @@ stockly/
 
 ### Prerequisites
 
-- **Node.js**: Version 18 or higher
-- **npm** or **yarn**: Package manager
-- **MongoDB**: Database (local or cloud instance)
 - **Git**: Version control
+- **Docker**: Virtualisation
 
 ### Installation
 
 1. **Clone the repository**
 
    ```bash
-   git clone https://github.com/your-username/stockly.git
-   cd stockly
+   git clone https://github.com/GGurol/Stock-Inventory-Management-System--NextJS-FullStack.git
    ```
 
-2. **Install dependencies**
+   ```
+   cd Stock-Inventory-Management-System--NextJS-FullStack
+
+   ```
+
+2. **Generate the MongoDB Security Key**
+
+    To ensure the database runs securely, create a key file by executing the following commands in the project’s root directory:
+
+    ```
+    openssl rand -base64 756 > mongo.key
+    ```
+    ```
+    chmod 400 mongo.key
+    ```
+
+3. **Build with docker**
 
    ```bash
-   npm install
-   # or
-   yarn install
+   docker compose up --build -d
    ```
 
-3. **Environment Setup**
-
-   Create a `.env` file in the root directory:
-
-   ```env
-   # Database Configuration
-   # DATABASE_URL="mongodb://localhost:27017/stockly"
-   # or for MongoDB Atlas:
-   DATABASE_URL="mongodb+srv://username:password@cluster.mongodb.net/stockly?retryWrites=true&w=majority"
-
-   # JWT Configuration
-   JWT_SECRET="your-super-secret-jwt-key-here"
-   # JWT_EXPIRES_IN="1h"
-
-   # Application Configuration (Optional)
-   # NEXTAUTH_URL="http://localhost:3000"
-   # NEXTAUTH_SECRET="your-nextauth-secret"
-   ```
-
-4. **Database Setup**
-
-   ```bash
-   # Generate Prisma client
-   npx prisma generate
-
-   # Push schema to database
-   npx prisma db push
-
-   # (Optional) View database in Prisma Studio
-   npx prisma studio
-   ```
-
-5. **Run the development server**
-
-   ```bash
-   npm run dev
-   # or
-   yarn dev
-   ```
-
-6. **Open your browser**
+4. **Open your browser**
    Navigate to [http://localhost:3000](http://localhost:3000)
 
 ---
 
-## 🔧 Environment Variables
+## 🔧 Environment Variables ( .env )
 
 ### Required Variables
 
-| Variable         | Description               | Example                             |
-| ---------------- | ------------------------- | ----------------------------------- |
-| `DATABASE_URL`   | MongoDB connection string | `mongodb://localhost:27017/stockly` |
-| `JWT_SECRET`     | Secret key for JWT tokens | `your-super-secret-jwt-key-here`    |
-| `JWT_EXPIRES_IN` | JWT token expiration time | `1h`                                |
+| Variable              | Description               | Example                             |
+| --------------------- | ------------------------- | ----------------------------------- |
+| `MONGO_USER`          | MongoDB username   string | `user`                              |
+| `MONGO_PASS`          | MongoDB password   string | `user_password`                     |
+| `MONGO_DB`            | MongoDB databse    string | `tockly`                            |
+| `JWT_SECRET`          | Secret key for JWT tokens | `your-super-secret-jwt-key-here`    |
+| `NEXTAUTH_SECRET`     | Auth secret key    string | create with:openssl rand -base64 32 |
+| `NEXT_PUBLIC_API_URL` | API request URL    string | `http://localhost:3000/api`         |
+| `NEXTAUTH_URL`        | LOCAL URL          string | `http://localhost:3000`             |
 
-### Optional Variables
 
-| Variable          | Description        | Default                 |
-| ----------------- | ------------------ | ----------------------- |
-| `NEXTAUTH_URL`    | NextAuth.js URL    | `http://localhost:3000` |
-| `NEXTAUTH_SECRET` | NextAuth.js secret | Auto-generated          |
 
 ### MongoDB Atlas Setup
 
@@ -815,36 +783,6 @@ const analyticsData = useMemo(() => {
 
 ---
 
-## 🚀 Deployment
-
-### Vercel Deployment (Recommended)
-
-1. **Connect your GitHub repository to Vercel**
-2. **Set environment variables in Vercel dashboard**
-3. **Deploy automatically on push to main branch**
-
-### Environment Variables for Production
-
-```env
-DATABASE_URL="your-production-mongodb-url"
-JWT_SECRET="your-production-jwt-secret"
-```
-
-### Build Commands
-
-```bash
-# Build the application
-npm run build
-
-# Start production server
-npm start
-
-# Run linting
-npm run lint
-```
-
----
-
 ## 🧪 Testing
 
 ### Manual Testing Checklist
@@ -865,18 +803,6 @@ npm run lint
 - [ ] API documentation page
 - [ ] API status monitoring
 
-### Automated Testing (Future Enhancement)
-
-```bash
-# Install testing dependencies
-npm install --save-dev jest @testing-library/react @testing-library/jest-dom
-
-# Run tests
-npm test
-
-# Run tests with coverage
-npm test -- --coverage
-```
 
 ---
 
@@ -909,42 +835,6 @@ export default {
     },
   },
 };
-```
-
-### Component Customization
-
-All UI components are built with Shadcn/ui and can be customized:
-
-```bash
-# Add new Shadcn/ui components
-npx shadcn@latest add [component-name]
-```
-
----
-
-## 🐛 Troubleshooting
-
-### Common Issues
-
-#### Database Connection Issues
-
-```bash
-# Check database connection
-npx prisma db pull
-
-# Reset database (development only)
-npx prisma db push --force-reset
-```
-
-#### Build Errors
-
-```bash
-# Clear Next.js cache
-rm -rf .next
-
-# Reinstall dependencies
-rm -rf node_modules package-lock.json
-npm install
 ```
 
 #### Authentication Issues
@@ -1008,33 +898,6 @@ npm install
 
 ---
 
-## 🤝 Contributing
-
-### Development Workflow
-
-1. **Fork the repository**
-2. **Create a feature branch**
-
-   ```bash
-   git checkout -b feature/your-feature-name
-   ```
-
-3. **Make your changes**
-4. **Test thoroughly**
-5. **Commit your changes**
-
-   ```bash
-   git commit -m "feat: add new feature"
-   ```
-
-6. **Push to your fork**
-
-   ```bash
-   git push origin feature/your-feature-name
-   ```
-
-7. **Create a pull request**
-
 ### Code Style Guidelines
 
 - Use TypeScript for type safety
@@ -1054,7 +917,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 🙏 Acknowledgments
 
 - **Next.js Team** for the amazing framework
-- **Vercel** for hosting and deployment
 - **Prisma Team** for the excellent ORM
 - **Shadcn/ui** for the beautiful components
 - **Tailwind CSS** for the utility-first CSS framework
@@ -1144,13 +1006,3 @@ If you encounter any issues or have questions:
 | Advanced Search           | ✅ Complete | Enhanced search with multiple filters  |
 
 ---
-
-## 🎉 Happy Coding! 🎉
-
-Feel free to use this project repository and extend this project further!
-
-If you have any questions or want to share your work, reach out via GitHub or my portfolio at [https://arnob-mahmud.vercel.app/](https://arnob-mahmud.vercel.app/).
-
-**Enjoy building and learning!** 🚀
-
-Thank you! 😊
