@@ -231,10 +231,10 @@ stockly/
     chmod 400 mongo.key
     ```
 
-3. **Build with docker**
+3. **Build with docker via Makefile**
 
    ```bash
-   docker compose up --build -d
+   make up
    ```
 
 4. **Open your browser**
@@ -255,18 +255,9 @@ stockly/
 | `NEXTAUTH_SECRET`     | Auth secret key    string | create with:openssl rand -base64 32 |
 | `NEXT_PUBLIC_API_URL` | API request URL    string | `http://localhost:3000/api`         |
 | `NEXTAUTH_URL`        | LOCAL URL          string | `http://localhost:3000`             |
+| `APP_ENV`             | Build type         string | `development` or `production`       |
 
 
-
-### MongoDB Atlas Setup
-
-1. Create a MongoDB Atlas account
-2. Create a new cluster
-3. Get your connection string
-4. Replace `username`, `password`, and `cluster` with your values
-5. Add the connection string to your `.env` file
-
----
 
 ## 📊 Database Schema
 

@@ -1,8 +1,0 @@
-{
-  "/page": "app/page.js",
-  "/register/page": "app/register/page.js",
-  "/business-insights/page": "app/business-insights/page.js",
-  "/api-docs/page": "app/api-docs/page.js",
-  "/api-status/page": "app/api-status/page.js",
-  "/login/page": "app/login/page.js"
-}
