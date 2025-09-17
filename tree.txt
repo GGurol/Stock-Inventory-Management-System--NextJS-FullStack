@@ -30,7 +30,6 @@
 │   │           ├── Status.tsx
 │   │           └── Supplier.tsx
 │   ├── authContext.tsx
-│   ├── AuthInitializer.tsx
 │   ├── business-insights
 │   │   ├── BusinessInsightsClient.tsx
 │   │   └── page.tsx
@@ -97,6 +96,7 @@
 │       ├── toaster.tsx
 │       └── toast.tsx
 ├── components.json
+├── docker-compose.override.yml
 ├── docker-compose.yml
 ├── Dockerfile
 ├── favicon.ico
@@ -105,12 +105,15 @@
 ├── launch.json
 ├── lib
 │   └── utils.ts
+├── Makefile
 ├── middleware
 │   └── authMiddleware.ts
 ├── middleware.ts
 ├── mongo-init.sh
 ├── mongo.key
 ├── next.config.mjs
+├── next-env.d.ts
+├── node_modules
 ├── package.json
 ├── pages
 │   └── api
@@ -142,4 +145,4 @@
     ├── auth.ts
     └── axiosInstance.ts
 
-31 directories, 112 files
+32 directories, 114 files

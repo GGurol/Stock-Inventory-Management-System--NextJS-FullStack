@@ -1,0 +1,10 @@
+{
+  "/_app": "pages/_app.js",
+  "/_error": "pages/_error.js",
+  "/_document": "pages/_document.js",
+  "/api/categories": "pages/api/categories.js",
+  "/api/suppliers": "pages/api/suppliers.js",
+  "/api/products": "pages/api/products.js",
+  "/api/auth/session": "pages/api/auth/session.js",
+  "/api/auth/logout": "pages/api/auth/logout.js"
+}
